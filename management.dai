@@ -1,0 +1,135 @@
+;;; management.dai
+
+(input file "Tillage.dai")
+(input file "pesticides.dai")
+(input file "crop_management.dai")
+
+(defaction "WW" activity
+  (wait_mm_dd 9 15)
+  (with-column "NW_field"
+  (wait (or (trafficable)
+	  (after_mm_dd 9 20))))
+  (plowing)
+  (wait_mm_dd 9 20)
+  (with-column "NW_field"
+    (wait (or (trafficable)
+  	  (after_mm_dd 10 1))))
+  (seed_bed_preparation_karl)(sow "Winter Wheat" (seed 180 [kg w.w./ha]))
+  (wait (or (crop_ds_after "Winter Wheat" 2.0)(mm_dd 9 7)))
+  (harvest "Winter Wheat" (stub 8 [cm])(stem 0.7)(leaf 0.7)))
+
+  
+(defaction "SB" activity
+  (wait_mm_dd 11 1)
+  (with-column "NW_field"
+  (wait (or (trafficable)                
+        (after_mm_dd 11 15)))) 
+  (plowing) 
+  (wait_mm_dd 3 20) 
+  (with-column "NW_field"
+  (wait (or (trafficable)                
+        (after_mm_dd 4 15))))  
+  (seed_bed_preparation_karl)
+  (sow "Spring Barley")
+  (wait (or (crop_ds_after "Spring Barley" 2.0)(mm_dd 9 1)))
+  (harvest "Spring Barley"))
+
+(defaction "SuB" activity
+  (wait_mm_dd 11 1)
+  (with-column "NW_field"
+  (wait (or (trafficable)                
+        (after_mm_dd 11 15))))  
+  (plowing)  
+  (remove_solute glyphosate)
+  (remove_solute AMPA)
+  (remove_solute phenmedipham) 
+  (remove_solute methyl_carbamate)
+  (remove_solute ethofumesate)    
+  (remove_solute metamitron)
+  (remove_solute desamino-metamitron)     
+  (remove_solute clomazone)
+  (wait_mm_dd 3 25)   
+  (with-column "NW_field"
+  (wait (or (trafficable)                
+        (after_mm_dd 4 10))))
+  (seed_bed_preparation_karl)
+  (sow "Sugar Beet")
+  (wait_mm_dd 9 25)
+  (harvest "Sugar Beet")) 
+   
+
+  (defaction "RoundUp SuB" activity
+    (wait (hour 8))
+    (spray glyphosate 540 [g/ha])) 
+  
+  (defaction "BNG SuB" activity
+    (wait (hour 8))   
+    (spray phenmedipham 64 [g/ha]) 
+    (spray ethofumesate 50 [g/ha])
+    (spray metamitron 525 [g/ha])) 
+       
+  (defaction "Centium SuB" activity
+    (wait (hour 8))
+    (spray clomazone 36 [g/ha]))     
+  
+  (defaction "SuB BNG 1" activity   
+    (wait_mm_dd 3 1) 
+    (with-column "NW_field"
+    (wait (or (and trafficable 
+    	           (not (daily_precipitation_above 2 [mm])))
+              (after_mm_dd 3 15)))); 10d before sowing
+  "RoundUp SuB"  
+  (with-column "NW_field"
+  (wait (or (and (crop_ds_after "Sugar Beet" 0.01)
+  		 (not (daily_precipitation_above 2 [mm]))
+  		 trafficable)
+	    (after_mm_dd 4 20)))) ; first part of growth season
+  "BNG SuB"
+  (wait_days 7) 
+  "BNG SuB"
+  (wait_days 15) 
+  "BNG SuB")
+
+
+  (defaction "SuB BNG 2" activity   
+    (wait_mm_dd 3 25) 
+    (with-column "NW_field"
+    (wait (or (and (crop_ds_after "Sugar Beet" -1)
+  		   (not (daily_precipitation_above 2 [mm]))
+  		   trafficable)
+  	      (crop_ds_after "Sugar Beet" 0)
+	      (after_mm_dd 4 11)))) ; before germination
+  "Centium SuB"  
+  (with-column "NW_field"
+  (wait (or (and (crop_ds_after "Sugar Beet" 0.01)
+  		 (not (daily_precipitation_above 2 [mm]))
+  		 trafficable)
+	(after_mm_dd 4 20)))) ; first part of growth season
+  "BNG SuB"
+  (wait_days 7) 
+  "BNG SuB"
+  (wait_days 15) 
+  "BNG SuB")
+
+
+(defaction "SuB Spray 1"
+  (while "SuB"
+    ("SuB BNG 1")))   
+
+(defaction "SuB Spray 2"
+  (while "SuB"
+    ("SuB BNG 2")))   
+
+(defaction "Sim_2_SuB_SB_WW" activity
+  "SuB Spray 1"
+  "SB"
+  "WW"
+  "SuB Spray 2"
+  "SB"
+  "WW")
+  
+(defaction "Sim_inf_SuB_SB_WW" 
+  (repeat "Sim_2_SuB_SB_WW"))
+  
+  
+  

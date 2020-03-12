@@ -1,0 +1,181 @@
+;;; test-jv.dai -- Test fixed boundary conditions.
+
+(input file "log.dai")
+
+;; Biopores.
+
+(defbiopore common matrix
+  (K_wall_relative 1 [%])
+  (allow_upward_flow false))
+
+(defsecondary PlowPan pressure
+ (h_lim 3.0 [pF])
+ (alpha 0.00003 [h^-1]))
+
+(defsecondary Bt pressure
+ (h_lim 2.5 [pF])
+ (alpha 0.00001 [h^-1]))
+
+ (defsecondary agrovand pressure 
+  (h_lim 2.0 [pF])
+  (alpha 0.0001 [h^-1]))
+
+(defbiopore "matrix_S"
+   (common (height_start 0 [cm])
+           (height_end -25 [cm])
+           (density 100 [m^-2])
+           (diameter 2 [mm])))
+           
+(defbiopore "matrix_S_deep"
+   (common (height_start 0 [cm])
+           (height_end -120 [cm])
+           (diameter 4 [mm])
+           (density 23 [m^-2])))       
+
+(defbiopore "matrix_30cm"
+   (common (height_start -30 [cm])
+           (height_end -120 [cm])
+           (diameter 4 [mm])
+           (density 7 [m^-2])
+           ))      
+           
+(defbiopore "matrix_S_halfway"
+   (common (height_start 0 [cm])
+           (height_end -60 [cm])
+           (diameter 4 [mm])
+           (density 23 [m^-2])))
+           
+(defbiopore "drain_S"
+   (drain  
+           (height_start 0 [cm])
+           (height_end -100 [cm])
+           (diameter 4 [mm])
+           (pipe_position -110 [cm])
+           (density (plf x (range [m^-2])
+                           (domain [cm])
+                           (points (20 11.5)
+                                   (30 0))))))
+          
+(defbiopore "drain_30cm"
+   (drain  (height_start -30 [cm])
+           (height_end -100 [cm])
+           (diameter 4 [mm])
+           (pipe_position -110 [cm])
+           (density (plf x (range [m^-2])
+                           (domain [cm])
+                           (points (20 3.5)
+                                   (30 0))))))
+
+;; horizons
+
+(defhorizon Ap FAO3
+;; same texture in the 25 cm
+	(clay 0.1057) (silt 0.3160) (sand 0.5548)
+	(humus 0.0235))
+	
+
+(defhorizon Surface Ap
+;; 4 cm
+  (dry_bulk_density 1.21 [g/cm^3])
+  (hydraulic 
+	hypres 
+	(K_sat 40 [cm/h])
+	(topsoil true)))
+	
+(defhorizon Surface_sealed Ap
+;; 4 cm
+  (dry_bulk_density 1.46 [g/cm^3])
+  (hydraulic 
+	hypres 
+	(K_sat 20 [cm/h])
+	(topsoil true)))
+	
+(defhorizon OLOH Ap
+  (dry_bulk_density 1.495 [g/cm^3])
+  (hydraulic 
+    M_vG
+     (Theta_sat 43.6 [%]) 
+     (Theta_res  1 [%])
+     (alpha 0.4849 [cm^-1])
+     (n  1.1478)
+     (K_sat 3 [cm/h]) 
+     (l 0.5))) 
+
+
+(defhorizon ILD00 Ap
+  (dry_bulk_density 1.519 [g/cm^3])
+  (hydraulic 
+    M_vG
+     (Theta_sat 42.7 [%]) 
+     (Theta_res  1 [%])
+     (alpha 0.2348 [cm^-1])
+     (n  1.1583)
+     (K_sat 1.5 [cm/h]) 
+     (l 0.5))) 
+
+(defhorizon IHD00  Ap
+  (dry_bulk_density 1.635 [g/cm^3])
+  (hydraulic 
+    M_vG
+     (Theta_sat 38.3 [%]) 
+     (Theta_res  1 [%])
+     (alpha 0.0836 [cm^-1])
+     (n  1.1655)
+     (K_sat 0.5 [cm/h]) 
+     (l 0.5)))
+
+
+(defhorizon ILD08 Ap
+  (dry_bulk_density 1.456 [g/cm^3])
+  (hydraulic 
+    M_vG
+     (Theta_sat 45.1 [%]) 
+     (Theta_res  1 [%])
+     (alpha 0.2333 [cm^-1])
+     (n  1.1651)
+     (K_sat 3 [cm/h]) 
+     (l 0.5))) 
+     
+(defhorizon IHD08 Ap
+  (dry_bulk_density 1.643 [g/cm^3])
+  (hydraulic 
+    M_vG
+     (Theta_sat 38 [%]) 
+     (Theta_res  1 [%])
+     (alpha 0.0603 [cm^-1])
+     (n  1.1722)
+     (K_sat 1.5 [cm/h])
+     (l 0.5)))     
+         
+     
+(defhorizon ILD16  Ap
+  (dry_bulk_density 1.523 [g/cm^3])
+  (hydraulic 
+    M_vG
+     (Theta_sat 42.5 [%]) 
+     (Theta_res  1 [%])
+     (alpha 0.2206 [cm^-1])
+     (n  1.1590)
+     (K_sat 5.0 [cm/h])
+     (l 0.5))) 
+
+(defhorizon "Rorrende Bplow" USDA3
+  (description "25-33 cm Petersen et al (2004)")
+  (clay 0.148)(silt 0.214)(sand 0.638) (humus 0.016)
+  (dry_bulk_density 1.75 [g/cm^3])
+  (anisotropy 12)
+  (secondary_domain PlowPan))     
+
+(defhorizon "Rorrendegaard Bt" USDA3
+  (description "33-120 cm")
+  (clay 0.222)(silt 0.195)(sand 0.583)(humus 0.016)
+  (dry_bulk_density 1.65 [g/cm^3])
+  (secondary_domain Bt))
+
+(defhorizon "Rorrendegaard C" USDA3
+  (description "120-200 cm")
+  (clay 0.207)(silt 0.235)(sand 0.558) (humus 0.01)
+  (dry_bulk_density 1.69 [g/cm^3])
+  (secondary_domain agrovand))
+
+

@@ -1,0 +1,53 @@
+;; tillage.dai 
+
+(defcondition trafficable and
+  (not (soil_water_pressure_above (height -10.0 [cm]) (potential -50.0 [cm])))
+  (soil_temperature_above (height -10.0 [cm]) (temperature 0.0 [dg C])))
+
+
+;;Brugt som pløjning under "Pløjet"
+(defaction plowing swap 
+  ;(random_roughness 24 [mm])
+  (middle -12.5)   ;; det halve af dybden
+  (depth -25.0))
+
+;;Brugt som "øvrig jordbearbejdning forud for såning" under "Pløjet"
+(defaction seed_bed_preparation_karl mix -4.0 
+  ;(random_roughness 12 [mm])
+  (penetration 0.6)
+  (surface_loose 1.0 []))
+
+
+;;Brugt som strigling under "direkte såning"
+(defaction stubble_cultivation_ror mix -6.0 ;;(tal efter mix er dybde)
+  (random_roughness 15 [mm])
+  (surface_loose 1.0 [])
+  (penetration 0.6))
+
+;;Brugt forud for såning i "Direkte såning". 
+(defaction sow-tillage mix -1.0
+  (random_roughness 12 [mm])
+  (penetration 0.0 [])
+  (surface_loose 0.4 [])
+  )
+
+
+
+
+;;Brugt som "falsk såbed" i "Harvet"
+(defaction seed_bed_preparation_ror mix -6.0 
+  (random_roughness 12 [mm])
+  (penetration 0.6)
+  (surface_loose 1.0 []))
+
+;;Brugt som opharvning i "Harvet"
+(defaction rotavation mix -5.0
+  (random_roughness 15 [mm])
+  (surface_loose 1.0 []))
+ 
+
+
+
+
+
+

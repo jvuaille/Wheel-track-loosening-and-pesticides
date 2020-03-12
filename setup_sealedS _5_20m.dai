@@ -1,0 +1,400 @@
+;;; setup_sealedS_5_20m.dai
+
+(input file "soil.dai")
+(input file "management.dai")
+(input file "climate.dai")
+
+;; define columns
+(defcolumn common default
+  (OrganicMatter none) 
+  (Chemistry multi (combine 
+  				Hussar
+  				DFF
+  				Buctril
+  				Comet
+  				Propulse
+  				RoundUp
+  				BetanalPower
+  				Centium
+  				Nortron
+  				Goltix)) 		
+  (Groundwater aquitard
+  	       (pressure_table const -180 [cm])
+               (K_aquitard 0.01 [cm/h])
+               (Z_aquitard 200 [cm]))
+ (Drain lateral (pipe_position -110 [cm]) (L 20 [m]))
+ (Movement vertical
+    (Geometry 
+		(zplus 
+		-1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -12 
+		-13 -14 -15 -16 -17 -18 -19 -20 -22 -24 -26 -28 -30
+		   -35 -40 -50 -60 -75 -90 -100 -120 
+		   -125 -150 -170 -200 [cm])))
+    (Surface (DetentionCapacity 5 [mm]))) ; Runoff				 
+ 
+
+(defcolumn field common
+(Movement vertical
+    (Tertiary (biopores (active_msg none)
+			(classes ("matrix_S") 
+				 ("matrix_S_halfway")
+				 ("matrix_S_deep")
+				 ("matrix_30cm"))))))
+(defcolumn drain_ditch common
+(Movement vertical
+    (Tertiary (biopores (active_msg none)
+			(classes ("matrix_S") 
+				 ("matrix_S_halfway")
+				 ("matrix_S_deep")
+				 ("matrix_30cm")
+				 ("drain_30cm")
+				 ("drain_S"))))))	; 2 drain connected biopore types on drain_ditch column			
+ 	
+(defcolumn OLOH_field field
+  (Soil 
+        (MaxRootingDepth 150 [cm])
+	(border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+                  (-25.00 OLOH)
+		  (-33 "Rorrende Bplow")                  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))
+                  
+(defcolumn OLOH_drain_ditch drain_ditch
+  (Soil 
+        (MaxRootingDepth 150 [cm])
+	(border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+                  (-25 OLOH)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))              
+
+(defcolumn ILD00_field field
+  (Soil 
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-25 IHD00)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))
+                  
+(defcolumn ILD00_drain_ditch drain_ditch
+  (Soil 
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-25 IHD00)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))     
+                  
+(defcolumn IHD00_HM_field field
+  (Soil 
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-25 IHD00_HM)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))
+                  
+(defcolumn IHD00_HM_drain_ditch drain_ditch
+  (Soil 
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-25 IHD00_HM)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))                          
+                  
+(defcolumn ILD08_field field
+  (Soil
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-12.00 ILD08)
+                  (-25.00 D0)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))
+   
+(defcolumn ILD08_drain_ditch drain_ditch
+  (Soil
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-12.00 ILD08)
+                  (-25.00 D0)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))
+ 
+(defcolumn IHD08_HM_field field
+  (Soil
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-12.00 IHD08_HM)
+                  (-25.00 IHD00_HM)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))
+   
+(defcolumn IHD08_HM_drain_ditch drain_ditch
+  (Soil
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-12.00 IHD08_HM)
+                  (-25.00 IHD00_HM)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))
+                  
+(defcolumn ILD16_field field
+  (Soil 
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-20.00 ILD16)
+                  (-25.00 ILD00)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))
+                                   
+(defcolumn ILD16_drain_ditch drain_ditch
+  (Soil 
+        (MaxRootingDepth 150 [cm])
+        (border -4 -8 -12 -30 [cm])
+        (horizons (-4.00  Surface_sealed)
+        	  (-20.00 ILD16)
+                  (-25.00 ILD00)
+                  (-33 "Rorrende Bplow")  
+                  (-120 "Rorrendegaard Bt")
+                  (-200 "Rorrendegaard C"))))                                   
+                                   
+(defprogram SB_loosening Daisy
+
+  ;; Columna to use
+  (column OLOH_drain_ditch OLOH_field 
+  	  ILD00_drain_ditch ILD00_field 
+  	  IHD00_HM_drain_ditch IHD00_HM_field 
+  	  ILD08_drain_ditch ILD08_field
+  	  IHD08_HM_drain_ditch IHD08_HM_field 
+  	  ILD16_drain_ditch ILD16_field) 
+  	  
+  ;; Weather and years
+  (time 1962 09 01) ; 3-year warm-up
+  (activate_output (after 1965 09 29))
+  (stop 2298 09 29) 
+
+  
+  (manager activity "Sim_inf_SuB_SB_WW")
+  (weather CPH)
+  
+  ;; log files
+  ;(log_prefix "")
+  (log_time_columns year month mday hour)
+  (output harvest
+	 ("Field water" (when daily) (column OLOH_drain_ditch))
+	 ("Field water" (when daily) (column ILD00_drain_ditch))
+	 ("Field water" (when daily) (column ILD08_drain_ditch))
+	 ("Field water" (when daily) (column ILD16_drain_ditch))
+	 ("Field water" (when daily) (column IHD00_HM_drain_ditch))
+	 ("Field water" (when daily) (column IHD08_HM_drain_ditch))	 
+
+	("Field chemical" (when daily) (column OLOH_drain_ditch) (chemical glyphosate))
+	("Field chemical" (when daily) (column OLOH_drain_ditch) (chemical AMPA))
+	("Field chemical" (when daily) (column OLOH_drain_ditch) (chemical phenmedipham))
+	("Field chemical" (when daily) (column OLOH_drain_ditch) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column OLOH_drain_ditch) (chemical clomazone))
+	("Field chemical" (when daily) (column OLOH_drain_ditch) (chemical ethofumesate))
+	("Field chemical" (when daily) (column OLOH_drain_ditch) (chemical metamitron))
+	("Field chemical" (when daily) (column OLOH_drain_ditch) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column ILD00_drain_ditch) (chemical glyphosate))
+	("Field chemical" (when daily) (column ILD00_drain_ditch) (chemical AMPA))
+	("Field chemical" (when daily) (column ILD00_drain_ditch) (chemical phenmedipham))
+	("Field chemical" (when daily) (column ILD00_drain_ditch) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column ILD00_drain_ditch) (chemical clomazone))
+	("Field chemical" (when daily) (column ILD00_drain_ditch) (chemical ethofumesate))
+	("Field chemical" (when daily) (column ILD00_drain_ditch) (chemical metamitron))
+	("Field chemical" (when daily) (column ILD00_drain_ditch) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column ILD08_drain_ditch) (chemical glyphosate))
+	("Field chemical" (when daily) (column ILD08_drain_ditch) (chemical AMPA))
+	("Field chemical" (when daily) (column ILD08_drain_ditch) (chemical phenmedipham))
+	("Field chemical" (when daily) (column ILD08_drain_ditch) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column ILD08_drain_ditch) (chemical clomazone))
+	("Field chemical" (when daily) (column ILD08_drain_ditch) (chemical ethofumesate))
+	("Field chemical" (when daily) (column ILD08_drain_ditch) (chemical metamitron))
+	("Field chemical" (when daily) (column ILD08_drain_ditch) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column IHD00_HM_drain_ditch) (chemical glyphosate))
+	("Field chemical" (when daily) (column IHD00_HM_drain_ditch) (chemical AMPA))
+	("Field chemical" (when daily) (column IHD00_HM_drain_ditch) (chemical phenmedipham))
+	("Field chemical" (when daily) (column IHD00_HM_drain_ditch) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column IHD00_HM_drain_ditch) (chemical clomazone))
+	("Field chemical" (when daily) (column IHD00_HM_drain_ditch) (chemical ethofumesate))
+	("Field chemical" (when daily) (column IHD00_HM_drain_ditch) (chemical metamitron))
+	("Field chemical" (when daily) (column IHD00_HM_drain_ditch) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column IHD08_HM_drain_ditch) (chemical glyphosate))
+	("Field chemical" (when daily) (column IHD08_HM_drain_ditch) (chemical AMPA))
+	("Field chemical" (when daily) (column IHD08_HM_drain_ditch) (chemical phenmedipham))
+	("Field chemical" (when daily) (column IHD08_HM_drain_ditch) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column IHD08_HM_drain_ditch) (chemical clomazone))
+	("Field chemical" (when daily) (column IHD08_HM_drain_ditch) (chemical ethofumesate))
+	("Field chemical" (when daily) (column IHD08_HM_drain_ditch) (chemical metamitron))
+	("Field chemical" (when daily) (column IHD08_HM_drain_ditch) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column ILD16_drain_ditch) (chemical glyphosate))
+	("Field chemical" (when daily) (column ILD16_drain_ditch) (chemical AMPA))
+	("Field chemical" (when daily) (column ILD16_drain_ditch) (chemical phenmedipham))
+	("Field chemical" (when daily) (column ILD16_drain_ditch) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column ILD16_drain_ditch) (chemical clomazone))
+	("Field chemical" (when daily) (column ILD16_drain_ditch) (chemical ethofumesate))
+	("Field chemical" (when daily) (column ILD16_drain_ditch) (chemical metamitron))
+	("Field chemical" (when daily) (column ILD16_drain_ditch) (chemical desamino-metamitron))
+	
+
+	 ("Surface Water Balance" (when daily) (column OLOH_drain_ditch))  	
+	 ("Surface Water Balance" (when daily) (column ILD00_drain_ditch))  	
+	 ("Surface Water Balance" (when daily) (column ILD08_drain_ditch))  	
+	 ("Surface Water Balance" (when daily) (column ILD16_drain_ditch))  	
+	 ("Surface Water Balance" (when daily) (column IHD00_HM_drain_ditch))  	
+	 ("Surface Water Balance" (when daily) (column IHD08_HM_drain_ditch))  	 
+	 
+	  
+  	 ("Soil water" (when daily) (column OLOH_drain_ditch))
+  	 ("Soil water" (when daily) (column ILD00_drain_ditch))  	  
+  	 ("Soil water" (when daily) (column ILD08_drain_ditch))
+  	 ("Soil water" (when daily) (column ILD16_drain_ditch))
+   	 ("Soil water" (when daily) (column IHD00_HM_drain_ditch))  	  
+  	 ("Soil water" (when daily) (column IHD08_HM_drain_ditch))
+ 
+	 ("Soil Water Content" (when daily) (column OLOH_drain_ditch))
+	 ("Soil Water Content" (when daily) (column ILD00_drain_ditch))	  
+	 ("Soil Water Content" (when daily) (column ILD08_drain_ditch))
+	 ("Soil Water Content" (when daily) (column ILD16_drain_ditch))	
+	 ("Soil Water Content" (when daily) (column IHD00_HM_drain_ditch))	  
+	 ("Soil Water Content" (when daily) (column IHD08_HM_drain_ditch))	 
+	
+	  ("Soil Water Potential (pF)" (when daily) (column OLOH_drain_ditch))	  
+	  ("Soil Water Potential (pF)" (when daily) (column ILD00_drain_ditch))
+	  ("Soil Water Potential (pF)" (when daily) (column ILD08_drain_ditch))
+	  ("Soil Water Potential (pF)" (when daily) (column ILD16_drain_ditch))
+	  ("Soil Water Potential (pF)" (when daily) (column IHD00_HM_drain_ditch))
+	  ("Soil Water Potential (pF)" (when daily) (column IHD08_HM_drain_ditch))	  
+	
+    	  ("Soil Water Potential" (when daily) (column OLOH_drain_ditch))	  
+	  ("Soil Water Potential" (when daily) (column ILD00_drain_ditch))
+	  ("Soil Water Potential" (when daily) (column ILD08_drain_ditch))
+	  ("Soil Water Potential" (when daily) (column ILD16_drain_ditch))
+	  ("Soil Water Potential" (when daily) (column IHD00_HM_drain_ditch))
+	  ("Soil Water Potential" (when daily) (column IHD08_HM_drain_ditch))	  
+	  
+
+	 ("Field water" (when daily) (column OLOH_field))
+	 ("Field water" (when daily) (column ILD00_field))
+	 ("Field water" (when daily) (column ILD08_field))
+	 ("Field water" (when daily) (column ILD16_field))
+	 ("Field water" (when daily) (column IHD00_HM_field))
+	 ("Field water" (when daily) (column IHD08_HM_field))	 
+
+	("Field chemical" (when daily) (column OLOH_field) (chemical glyphosate))
+	("Field chemical" (when daily) (column OLOH_field) (chemical AMPA))
+	("Field chemical" (when daily) (column OLOH_field) (chemical phenmedipham))
+	("Field chemical" (when daily) (column OLOH_field) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column OLOH_field) (chemical clomazone))
+	("Field chemical" (when daily) (column OLOH_field) (chemical ethofumesate))
+	("Field chemical" (when daily) (column OLOH_field) (chemical metamitron))
+	("Field chemical" (when daily) (column OLOH_field) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column ILD00_field) (chemical glyphosate))
+	("Field chemical" (when daily) (column ILD00_field) (chemical AMPA))
+	("Field chemical" (when daily) (column ILD00_field) (chemical phenmedipham))
+	("Field chemical" (when daily) (column ILD00_field) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column ILD00_field) (chemical clomazone))
+	("Field chemical" (when daily) (column ILD00_field) (chemical ethofumesate))
+	("Field chemical" (when daily) (column ILD00_field) (chemical metamitron))
+	("Field chemical" (when daily) (column ILD00_field) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column ILD08_field) (chemical glyphosate))
+	("Field chemical" (when daily) (column ILD08_field) (chemical AMPA))
+	("Field chemical" (when daily) (column ILD08_field) (chemical phenmedipham))
+	("Field chemical" (when daily) (column ILD08_field) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column ILD08_field) (chemical clomazone))
+	("Field chemical" (when daily) (column ILD08_field) (chemical ethofumesate))
+	("Field chemical" (when daily) (column ILD08_field) (chemical metamitron))
+	("Field chemical" (when daily) (column ILD08_field) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column IHD00_HM_field) (chemical glyphosate))
+	("Field chemical" (when daily) (column IHD00_HM_field) (chemical AMPA))
+	("Field chemical" (when daily) (column IHD00_HM_field) (chemical phenmedipham))
+	("Field chemical" (when daily) (column IHD00_HM_field) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column IHD00_HM_field) (chemical clomazone))
+	("Field chemical" (when daily) (column IHD00_HM_field) (chemical ethofumesate))
+	("Field chemical" (when daily) (column IHD00_HM_field) (chemical metamitron))
+	("Field chemical" (when daily) (column IHD00_HM_field) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column IHD08_HM_field) (chemical glyphosate))
+	("Field chemical" (when daily) (column IHD08_HM_field) (chemical AMPA))
+	("Field chemical" (when daily) (column IHD08_HM_field) (chemical phenmedipham))
+	("Field chemical" (when daily) (column IHD08_HM_field) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column IHD08_HM_field) (chemical clomazone))
+	("Field chemical" (when daily) (column IHD08_HM_field) (chemical ethofumesate))
+	("Field chemical" (when daily) (column IHD08_HM_field) (chemical metamitron))
+	("Field chemical" (when daily) (column IHD08_HM_field) (chemical desamino-metamitron))
+
+	("Field chemical" (when daily) (column ILD16_field) (chemical glyphosate))
+	("Field chemical" (when daily) (column ILD16_field) (chemical AMPA))
+	("Field chemical" (when daily) (column ILD16_field) (chemical phenmedipham))
+	("Field chemical" (when daily) (column ILD16_field) (chemical methyl_carbamate))
+	("Field chemical" (when daily) (column ILD16_field) (chemical clomazone))
+	("Field chemical" (when daily) (column ILD16_field) (chemical ethofumesate))
+	("Field chemical" (when daily) (column ILD16_field) (chemical metamitron))
+	("Field chemical" (when daily) (column ILD16_field) (chemical desamino-metamitron))
+
+	 ("Surface Water Balance" (when daily) (column OLOH_field))  	
+	 ("Surface Water Balance" (when daily) (column ILD00_field))  	
+	 ("Surface Water Balance" (when daily) (column ILD08_field))  	
+	 ("Surface Water Balance" (when daily) (column ILD16_field))  
+	 ("Surface Water Balance" (when daily) (column IHD00_HM_field))  	
+	 ("Surface Water Balance" (when daily) (column IHD08_HM_field))  
+	  
+  	 ("Soil water" (when daily) (column OLOH_field))
+  	 ("Soil water" (when daily) (column ILD00_field))  	  
+  	 ("Soil water" (when daily) (column ILD08_field))
+  	 ("Soil water" (when daily) (column ILD16_field))
+   	 ("Soil water" (when daily) (column IHD00_HM_field))  	  
+  	 ("Soil water" (when daily) (column IHD08_HM_field))
+  	 
+	 ("Soil Water Content" (when daily) (column OLOH_field))
+	 ("Soil Water Content" (when daily) (column ILD00_field))	  
+	 ("Soil Water Content" (when daily) (column ILD08_field))
+	 ("Soil Water Content" (when daily) (column ILD16_field))	
+	 ("Soil Water Content" (when daily) (column IHD00_HM_field))	  
+	 ("Soil Water Content" (when daily) (column IHD08_HM_field))	 
+	
+	  ("Soil Water Potential (pF)" (when daily) (column OLOH_field))	  
+	  ("Soil Water Potential (pF)" (when daily) (column ILD00_field))
+	  ("Soil Water Potential (pF)" (when daily) (column ILD08_field))
+	  ("Soil Water Potential (pF)" (when daily) (column ILD16_field))
+	  ("Soil Water Potential (pF)" (when daily) (column IHD00_HM_field))
+	  ("Soil Water Potential (pF)" (when daily) (column IHD08_HM_field))
+	  	
+    	  ("Soil Water Potential" (when daily) (column OLOH_field))	  
+	  ("Soil Water Potential" (when daily) (column ILD00_field))
+	  ("Soil Water Potential" (when daily) (column ILD08_field))
+	  ("Soil Water Potential" (when daily) (column ILD16_field))	  	 
+	  ("Soil Water Potential" (when daily) (column IHD00_HM_field))
+	  ("Soil Water Potential" (when daily) (column IHD08_HM_field))
+	  ))
+
+;; Run
+(run SB_loosening)
+

@@ -1,0 +1,125 @@
+;;; pesticides.dai
+
+(input file "chemistry-base.dai")
+
+(defchemical glyphosate herbicide 
+  (molar_mass 169.1 [g/mol])
+  (surface_decompose_halftime 20.51 [d]) ; EFSA 2015 p.57
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 20.51 [d])
+  (decompose_products  (0.36 [] AMPA)) ; EFSA 2015 p.59
+  (adsorption linear (K_d 209.4 [mL/g])) ; EFSA 2015 p.61
+  )  
+  
+(defchemical AMPA herbicide 
+  (molar_mass 169.1 [g/mol])
+  (surface_decompose_halftime 88.84 [d])
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 88.84 [d]) ; EFSA risk assess 2015 p.59
+  (adsorption Freundlich (K_OC 9749 [mL/g]) (m 0.81) (C_ref 1 [mg/L])) ;EFSA risk assess 2015 p.62
+  )    
+  
+(defchemical phenmedipham herbicide 
+  (molar_mass 300.3 [g/mol])
+  (surface_decompose_halftime 71.85 [d]) ; EFSA risk assess 2017 p.16
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 71.85 [d])
+  (decompose_products  (0.140 [] methyl_carbamate)) ; review report EFSA 2004 p.6
+  (adsorption Freundlich (K_OC 1268 [mL/g]) (m 0.85) (C_ref 1 [mg/L])) ; review report EFSA 2004 p.8
+  )  
+
+(defchemical methyl_carbamate herbicide 
+  (molar_mass 167.16 [g/mol])
+  (surface_decompose_halftime 15.1 [d]) ; EFSA risk assess 2017 p.16
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 15.1 [d]) ;; EFSA risk assess 2017 p.16
+  (adsorption Freundlich (K_OC 52 [mL/g]) (m 0.74) (C_ref 1 [mg/L])) ; review report EFSA 2004 p.8
+  )  
+    
+(defchemical desmedipham herbicide ; forbidden from 2020
+  (molar_mass 300.31 [g/mol])
+  (surface_decompose_halftime 112.8 [d]) ; EFSA risk assess 2017 p.16
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 112.8 [d])
+  (decompose_products  (0.160 [] ethyl_carbamate))
+  (adsorption Freundlich (K_OC 3572.5 [mL/g]) (m 0.838) (C_ref 1 [mg/L]))
+  )   
+
+(defchemical ethyl_carbamate herbicide ; parent forbidden from 2020
+  (molar_mass 181.19 [g/mol])
+  (surface_decompose_halftime 4.5 [d]) ; EFSA risk assess 2017 p.16
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 4.5 [d])
+  (adsorption Freundlich (K_OC 165 [mL/g]) (m 0.786) (C_ref 1 [mg/L]))
+  ) 
+
+(defchemical clomazone herbicide 
+  (molar_mass 239.7 [g/mol])
+  (surface_decompose_halftime 97.1 [d]) ; EFSA risk assess 2007 p.41
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 97.1 [d])
+  ;(decompose_products  (0.250 [] FMC-653167))
+  (adsorption Freundlich (K_OC 286.5 [mL/g]) (m 0.88) (C_ref 1 [mg/L]))  ; EFSA risk assess 2007 p.44
+  )   
+
+(defchemical FMC-653167 herbicide ; EFSA risk assess 2007 p.41: no relevant metabolites
+  (molar_mass 241.7 [g/mol])
+  (surface_decompose_halftime 2 [d])
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 3.05 [d])
+  (adsorption linear (K_OC 29.4 [mL/g]))
+  ) 
+
+(defchemical ethofumesate herbicide 
+  (molar_mass 286.3 [g/mol])
+  (surface_decompose_halftime 21.6 [d])  ; EFSA risk assess 2016 p.58
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 21.6 [d])
+  (adsorption Freundlich (K_OC 118 [mL/g]) (m 0.91) (C_ref 1 [mg/L])) ; EFSA risk assess 2016 p.63
+  )   
+
+(defchemical metamitron herbicide 
+  (molar_mass 202.2 [g/mol]) ; EFSA risk assess 2008 
+  (surface_decompose_halftime 19 [d]) ; EFSA risk assess 2008 p.54
+  (soil_affects_surface_decompose true) 
+  (decompose_halftime 19 [d])
+  (decompose_products  (0.28 [] desamino-metamitron)) ; EFSA risk assess 2008 p.55
+  (adsorption Freundlich (K_OC 122.3 [mL/g]) (m 0.77) (C_ref 1 [mg/L])) ; EFSA risk assess 2008 p.58
+  )   
+
+(defchemical desamino-metamitron herbicide 
+  (molar_mass 187.2 [g/mol])
+  (surface_decompose_halftime 30.5 [d]) ; EFSA risk assess 2008 p.55
+  (soil_affects_surface_decompose true) ; make surface decomposition like soil decomposition
+  (decompose_halftime 30.5 [d])
+  (adsorption Freundlich (K_OC 102.5 [mL/g]) (m 0.7805) (C_ref 1 [mg/L])) ; EFSA risk assess 2008 p.59
+  )   
+
+;; Description of Round-up
+(defchemistry RoundUp default
+  (trace glyphosate
+  	 AMPA
+  	 ))
+  	 
+;; Description of BetanalPower
+(defchemistry BetanalPower default
+  (trace phenmedipham
+  	 ;desmedipham
+  	 methyl_carbamate
+  	 ;ethyl_carbamate
+  	 ))
+
+;; Description of Centium
+(defchemistry Centium default
+  (trace clomazone
+  	 ;FMC-653167
+  	 ))
+  	 
+;; Description of Nortron
+(defchemistry Nortron default
+  (trace ethofumesate))  
+
+;; Description of Goltix
+(defchemistry Goltix default
+  (trace metamitron
+  desamino-metamitron))
