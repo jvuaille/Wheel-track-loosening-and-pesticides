@@ -50,7 +50,7 @@ wet_spraying_dates=[2047, 2113, 2119, 2143, 2179, 2209, 2215, 2221, 2302, 2332,
 prefix= 'myprefixfilename'
 
 # loop on the column type: drain connected or not
-for col in ['field','drain']: 
+for col in ['field','drain_ditch']: 
     # loop on drain spacing
     for space in [10,20]: 
         # loop on detention capacity
@@ -61,7 +61,7 @@ for col in ['field','drain']:
             # store the yearly loads of pesticides
             global_loads_sources=defaultdict(list)
             # loop on treatments
-            for depth in ['NW','D0','D8','D16','D0_HM','D8_HM']: #['OLOH','ILD00','ILD08','ILD16','IHD00','IHD08']
+            for depth in ['OLOH','ILD00','ILD08','ILD16','IHD00','IHD08']:
                 print(threshold, space, col, depth)
                 # store the yearly load of pesticides and water
                 yearly_leaching_sources, yearly_wflow_sources = defaultdict(list), defaultdict(list)

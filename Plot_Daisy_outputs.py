@@ -23,7 +23,7 @@ siwt=[0.3, 0.15] # surface inside WT
 sad=[0.05,0.1] # surface above the drains
 sawd=[0.95, 0.90] # surface away from the drains
 
-stat_endpoints=['average','std_error','median','10th_perc','90th_perc']
+stat_endpoints=['median','10th_perc','90th_perc']
 #chemicals=['glyphosate','phenmedipham', 'metamitron', 'diflufenican',
 #           'clomazone', 'fluopyram', 'ethofumesate', 'desamino-metamitron','pyraclostrobin',       
 #            'iodosulfuron-methyl-sodium', 'metsulfuron-methyl',  'AE-B107137',
@@ -38,6 +38,7 @@ chemicals=['glyphosate','phenmedipham','metamitron',
 dict_Pest_sources = defaultdict()
 dict_Pest_ally_sources = defaultdict()
 dict_Water_sources = defaultdict()
+dict_Water_ally_sources = defaultdict()
 # loop on drain spacing
 for icasespace, case_space in enumerate([20,10]):
     # loop on detention capacity
@@ -49,7 +50,30 @@ for icasespace, case_space in enumerate([20,10]):
                         threshold, case_space), index_col = 0)
                 drainconnected_water = pd.read_csv(outputs_folder_path+'\\'+'global_wflow_sources_drain_ditch_%d_%d.csv'%(
                         threshold, case_space), index_col = 0)
-                # pesticides
+                # 300 yearly water outputs
+                field_water_ally = pd.read_csv(outputs_folder_path+'\\'+'global_wloads_sources_field_%d_%d.csv'%(
+                        threshold, case_space), index_col = 0)
+                drainconnected_water_ally = pd.read_csv(outputs_folder_path+'\\'+'global_wloads_sources_drain_ditch_%d_%d.csv'%(
+                        threshold, case_space), index_col = 0)
+                for source in list(drainconnected_water.columns):
+                    dict_Water_ally_sources[source+'_%d_%d_%d'%(threshold,case_space,case_track)]=(
+                    weigh_field_areas_total_loads(sowt[icasetrack]*sawd[icasespace],
+                                           siwt[icasetrack]*sawd[icasespace], 
+                                           sowt[icasetrack]*sad[icasespace], 
+                                           siwt[icasetrack]*sad[icasespace], 
+                                           sawd[icasespace], sad[icasespace], 
+                                           field_water_ally[source], 
+                                           drainconnected_water_ally[source]))         
+                    for i,statendpoint in enumerate(stat_endpoints):
+                        dict_Water_sources[source+'_'+statendpoint+'_%d_%d_%d'%(
+                                threshold,case_space,case_track)]=(
+                        weigh_field_areas_sources_stats(sowt[icasetrack]*sawd[icasespace], 
+                                                        siwt[icasetrack]*sawd[icasespace], 
+                                                        sowt[icasetrack]*sad[icasespace], 
+                                                        siwt[icasetrack]*sad[icasespace], 
+                                                        sawd[icasespace], sad[icasespace], 
+                                                        field_water[source], 
+                                                        drainconnected_water[source])[i])                 # pesticides
                 for chemical in chemicals:
                     # 90th percentile load from columns drain connected or not 
                     field_pest = pd.read_csv(outputs_folder_path+'\\'+'global_scores_sources_field_%d_%d.csv'%(
@@ -76,16 +100,7 @@ for icasespace, case_space in enumerate([20,10]):
                                                    sawd[icasespace], sad[icasespace], 
                                                    field_pest[source+'_'+chemical], 
                                                    drainconnected_pest[source+'_'+chemical])[i])
-                        for source in list(drainconnected_water.columns):
-                            dict_Water_sources[source+'_'+statendpoint+'_%d_%d_%d'%(
-                                    threshold,case_space,case_track)]=(
-                            weigh_field_areas_sources_stats(sowt[icasetrack]*sawd[icasespace], 
-                                                            siwt[icasetrack]*sawd[icasespace], 
-                                                            sowt[icasetrack]*sad[icasespace], 
-                                                            siwt[icasetrack]*sad[icasespace], 
-                                                            sawd[icasespace], sad[icasespace], 
-                                                            field_water[source], 
-                                                            drainconnected_water[source])[i])
+
                     # weighed yearly loads       
                     for source in ['Soil drain', 'Biopore drain', 'Runoff']:
                         if chemical=='glyphosate' or chemical=='metamitron' or chemical=='phenmedipham':
@@ -98,7 +113,6 @@ for icasespace, case_space in enumerate([20,10]):
                                                    sawd[icasespace], sad[icasespace], 
                                                    field_pest_ally[source+'_'+chemical], 
                                                    drainconnected_pest_ally[source+'_'+chemical]))
-                    
 
 # =============================================================================
 # Water balance
@@ -143,6 +157,30 @@ for source in list(drainconnected_water.columns):
     my_index=['OLOH','OLOH + ILD00','OLOH + ILD08','OLOH + ILD16','OLOH + IHD00','OLOH + IHD08']
     pd.DataFrame(data=balance, index=my_index).to_csv(outputs_folder_path+'\\WaterBalance_%s.csv'%statistic)  
                 
+# Average and standard error of water balance
+    
+#'OLOH_only','ILD00','ILD08','ILD16','IHD00','IHD08'
+col='OLOH'           
+for source in ['Actual evapotranspiration', 'Matrix percolation', 
+               'Matrix drain flow', 'Biopore drain flow', 'Runoff']:
+    for icase_space, case_space in enumerate([20,10]):   
+        for icasetrack, case_track in enumerate([15,30]): 
+            for ithreshold, threshold in enumerate([5,20]): 
+#                print(np.average(dict_Water_ally_sources['Precipitation_%d_%d_%d'%(threshold,case_space,case_track)]['OLOH_only']))            
+#                print(np.std(dict_Water_ally_sources['Precipitation_%d_%d_%d'%(threshold,case_space,case_track)]['OLOH_only'])/np.sqrt(299))
+                if source == 'Matrix percolation':
+                    print(source,threshold,case_space,case_track,round(np.average(
+                    dict_Water_ally_sources['%s_%d_%d_%d'%(source,threshold,case_space,case_track)][col]+
+                    dict_Water_ally_sources['Biopore percolation_%d_%d_%d'%(threshold,case_space,case_track)][col]),1))
+                    print(source,threshold,case_space,case_track,round(np.std(
+                    dict_Water_ally_sources['%s_%d_%d_%d'%(source,threshold,case_space,case_track)][col]+
+                    dict_Water_ally_sources['Biopore percolation_%d_%d_%d'%(threshold,case_space,case_track)][col])/np.sqrt(299),1))
+                else:
+                    print(source,threshold,case_space,case_track,round(np.average(
+                    dict_Water_ally_sources['%s_%d_%d_%d'%(source,threshold,case_space,case_track)][col]),1))
+                    print(source,threshold,case_space,case_track,round(np.std(
+                    dict_Water_ally_sources['%s_%d_%d_%d'%(source,threshold,case_space,case_track)][col])/np.sqrt(299),1))
+    
 
 # =============================================================================
 # pesticides
@@ -173,12 +211,12 @@ first=True
 for n, source in enumerate(['Soil drain','Biopore drain','Runoff']):
     pest=dict_Pest_ally_sources[chemical+'_%s_%d_%d_%d'%(source,
             threshold,case_space,case_track)]
-    for it,t in enumerate(['NW_only','WT_0','WT_8','WT_16','WT_0_HM','WT_8_HM']):
+    for it,t in enumerate(['OLOH_only','ILD00','ILD08','ILD16','IHD00','IHD08']):
         if first:
             loads[t]=[0 for i in range(len(pest[t]))]
         loads[t]=loads[t]+(pest[t])
     first = False
-for it,t in enumerate(['NW_only','WT_0','WT_8','WT_16','WT_0_HM','WT_8_HM']):
+for it,t in enumerate(['OLOH_only','ILD00','ILD08','ILD16','IHD00','IHD08']):
     cum_loads=np.unique(loads[t], return_counts=True)
     line1, = ax[0].plot(np.cumsum(cum_loads[1]/np.sum(cum_loads[1])*100),(cum_loads[0]
     /spraying_rates[chemical]*100), marker=mymarker[it],markersize=5, color=mymap[it],label=treatments[it])
@@ -232,12 +270,12 @@ for n, source in enumerate(['Soil drain','Biopore drain','Runoff']):
     
     pest=dict_Pest_ally_sources[chemical+'_%s_%d_%d_%d'%(source,
             threshold,case_space,case_track)]
-    for it,t in enumerate(['NW_only','WT_0','WT_8','WT_16','WT_0_HM','WT_8_HM']):
+    for it,t in enumerate(['OLOH_only','ILD00','ILD08','ILD16','IHD00','IHD08']):
         if first:
             loads[t]=[0 for i in range(len(pest[t]))]
         loads[t]=loads[t]+(pest[t])
     first = False
-for it,t in enumerate(['NW_only','WT_0','WT_8','WT_16','WT_0_HM','WT_8_HM']):
+for it,t in enumerate(['OLOH_only','ILD00','ILD08','ILD16','IHD00','IHD08']):
     cum_loads=np.unique(loads[t], return_counts=True)
     line1, = ax.plot(np.cumsum(cum_loads[1]/np.sum(cum_loads[1])*100),(cum_loads[0]
     /spraying_rates[chemical]*100), marker=mymarker[it],markersize=5, color=mymap[it],label=treatments[it])
